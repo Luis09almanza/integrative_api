@@ -1,0 +1,6 @@
+flask
+flask-restplus
+pyserial
+psutil
+wmi
+flask_pymongo
