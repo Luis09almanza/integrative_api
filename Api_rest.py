@@ -1,21 +1,22 @@
-from urllib import response
-from flask import Flask, Response, request, jsonify
+from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
-from bson import json_util
 from bson.objectid import ObjectId
-import json
-import http.client
 from werkzeug.security import generate_password_hash
 from datetime import datetime
+from flask_cors import CORS
+
 
 app = Flask('__main__')
 
 app.config['MONGO_URI'] = 'mongodb://localhost/integradoraTest'
 mongo = PyMongo(app)
+CORS(app)
+
+
 userCollection = mongo.db.users
 devicesCollection = mongo.db.devices
 
-''' ######################## GUARDAR LA INFORMACION DEL DISPOSITIVO ✅###########################'''    
+''' ######################## RECIBIR LAS NOTAS DEL DISPOSITIVO ✅###########################'''    
 @app.route('/devices', methods=['POST'])
 def save_device():
     device = request.json
@@ -29,6 +30,18 @@ def save_device():
         return device
     else:
         not_found()
+ 
+ 
+''' ######################## OBTENER LAS NOTAS ✅###########################'''
+@app.route('/devices', methods=['GET'])
+def getValues():
+    values = []
+    
+    for doc in devicesCollection.find():
+        values.append({
+            'values': doc['value']
+        })
+    return jsonify(values)
     
     
 ''' ############################# CREAR EL USUARIO ✅ ####################################'''
@@ -58,6 +71,8 @@ def create_user():
     else:
         not_found()
 
+
+
 ''' ############################# BORRAR USUARIOS ✅ ####################################'''       
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
@@ -65,6 +80,8 @@ def delete_user(id):
     response = jsonify({'message': 'User Deleted Successfully'})
     response.status_code = 200
     return response
+
+
 
 ''' ############################# OBTENER USUARIOS POR ID ✅ ####################################'''    
 @app.route('/users/<id>', methods=['GET'])
@@ -112,6 +129,8 @@ def update_user(_id):
     else:
         return not_found
 
+
+
 # Para que de error 404
 @app.errorhandler(404)
 def not_found(error=None):
@@ -125,5 +144,4 @@ def not_found(error=None):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
-
+    app.run(debug=True)

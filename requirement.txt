@@ -4,3 +4,4 @@ pyserial
 psutil
 wmi
 flask_pymongo
+flask_cors
