@@ -5,3 +5,4 @@ psutil
 wmi
 flask_pymongo
 flask_cors
+iteration-utilities
